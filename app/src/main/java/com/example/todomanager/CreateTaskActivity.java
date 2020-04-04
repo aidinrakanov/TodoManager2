@@ -1,7 +1,5 @@
 package com.example.todomanager;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +10,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -20,12 +21,15 @@ public class CreateTaskActivity extends AppCompatActivity {
 
     EditText title, description;
     Button deadline, save, cancel;
-    TextView deadlinetext;
+    TextView deadlineText;
+
+    Date taskDeadline;
 
     Calendar calendar = Calendar.getInstance();
     DatePickerDialog picker;
-    Date taskDeadline;
 
+    Task task;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,58 +41,75 @@ public class CreateTaskActivity extends AppCompatActivity {
         deadline = findViewById(R.id.task_deadline_button);
         save = findViewById(R.id.task_save);
         cancel = findViewById(R.id.task_cancel);
-        deadlinetext = findViewById(R.id.task_deadline_text);
+        deadlineText = findViewById(R.id.task_deadline_text);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            position = intent.getIntExtra("position", -1);
+            if (position != -1) {
+                task = TaskHolder.tasks.get(position);
+                taskDeadline = task.deadline;
+                title.setText(task.title);
+                description.setText(task.description);
+                SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+                deadlineText.setText(format.format(task.deadline));
+            } else {
+                createTask();
+            }
+        } else {
+            createTask();
+        }
+    }
+
+    void createTask() {
+        task = new Task();
+        task.startDate = new Date();
+        task.isDone = false;
     }
 
     public void onChooseDate(View view) {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
-
         picker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                deadlinetext.setText(dayOfMonth+"."+ (month+1) +"."+year);
-                taskDeadline = new GregorianCalendar(year,month,dayOfMonth).getTime();
+                deadlineText.setText(dayOfMonth + "." + (month + 1) + "." + year);
+                taskDeadline = new GregorianCalendar(year, month, dayOfMonth).getTime();
             }
-        },year,month,day);
+        }, year, month, day);
         picker.show();
     }
 
     public void onSave(View view) {
-        String tasktitle = title.getText().toString();
 
-        if (tasktitle.equals("")){
-            Toast.makeText(this,"Enter task title", Toast.LENGTH_SHORT);
+        String taskTitle = title.getText().toString();
+        if (taskTitle.equals("")) {
+            Toast.makeText(this, "Enter task title", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String taskDescription = description.getText().toString();
-        if (taskDescription.equals("")){
-            Toast.makeText(this,"Enter task description", Toast.LENGTH_SHORT);
+        if (taskDescription.equals("")) {
+            Toast.makeText(this, "Enter task description", Toast.LENGTH_SHORT).show();
             return;
         }
 
-       Task task = new Task();
-       task.deadline = taskDeadline;
-       task.title = tasktitle;
-       task.descpription = taskDescription;
-       task.startDate = new Date();
-       task.isDone = false;
+        task.deadline = taskDeadline;
+        task.title = taskTitle;
+        task.description = taskDescription;
 
-       TaskHolder.tasks.add(task);
-
-        Intent intent = new Intent();
-        intent.putExtra("task", task);
-        setResult(RESULT_OK,intent);
+        if (position == -1) {
+            TaskHolder.tasks.add(task);
+        } else {
+            TaskHolder.tasks.remove(position);
+            TaskHolder.tasks.add(position, task);
+        }
         finish();
-
     }
 
     public void onCancel(View view) {
-
         setResult(RESULT_CANCELED);
         finish();
-
     }
 }

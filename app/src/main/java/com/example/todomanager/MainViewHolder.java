@@ -8,10 +8,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MainViewHolder extends RecyclerView.ViewHolder {
+
     TextView textView;
     CheckBox checkBox;
     TaskClickListener listener;
     Task task;
+    int position;
 
     public MainViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -21,7 +23,7 @@ public class MainViewHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onTaskClick(task);
+                listener.onTaskClick(position);
             }
         });
     }

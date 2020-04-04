@@ -11,17 +11,12 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="20sp"
-        android:text="1) line1"
-        />
-    
+        android:text="1) Fed my cat"/>
+
     <CheckBox
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:checked="true"
-
-        />
-
+        android:checked="true"/>
 
 </LinearLayout>

@@ -7,23 +7,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-
 public class MainAdapter extends RecyclerView.Adapter<MainViewHolder> {
 
     TaskClickListener listener;
-
-    public void addTask(Task task){
-        TaskHolder.tasks.add(task);
-        notifyDataSetChanged();
-    }
-
 
     @NonNull
     @Override
     public MainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.main_view_holder,parent,false);
+        View view = inflater.inflate(R.layout.main_view_holder, parent, false);
         MainViewHolder vh = new MainViewHolder(view);
         vh.listener = listener;
         return vh;
@@ -32,8 +24,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MainViewHolder holder, int position) {
         holder.task = TaskHolder.tasks.get(position);
-        holder.textView.setText((position+ 1) + ") " +TaskHolder.tasks.get(position).title);
+        holder.textView.setText((position + 1) + ") " + TaskHolder.tasks.get(position).title);
         holder.checkBox.setChecked(TaskHolder.tasks.get(position).isDone);
+        holder.position = position;
     }
 
     @Override
